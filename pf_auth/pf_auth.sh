@@ -5,32 +5,34 @@ THIS_DIR="$(cd "$(/usr/bin/dirname "$0")" || exit 1; /bin/pwd)"
 PF_TBL=${PF_TBL:-"tbl_sshauth_block"}
 FILTER=${FILTER:-"$THIS_DIR/filter_ipaddr.py"}
 PYTHON=${PYTHON:-"/usr/local/bin/python2"}
-AUTH_LOG=${AUTH_LOG:-"/var/log/auth.log"}
+EXPIRE=${EXPIRE:-"86400"}
+
+AUTH_LOGS="$*"
+
+# shows error message and quits
+_fatal() { >&2 echo "$*"; exit 1; }
 
 # check if pf is available - e.g. while booting
-if [ ! -e "/dev/pf" ]; then
-    >&2 echo "pf is not available!"
-    exit 1
-fi
+[ ! -e "/dev/pf" ] && _fatal "pf is not available"
 
-# check if we can access the auth.log
-if [ ! -r "$AUTH_LOG" ]; then
-    >&2 echo "auth.log not accessible: $AUTH_LOG"
-    exit 1
-fi
+# check if log files were provided
+[ -z "$AUTH_LOGS" ] && _fatal "please specify log file(s)"
 
-# grep all failed sshd connections from the auth log
-# collect all addresses that occur more than five times
-# and add them to the table
-for ADDR in $(
-        /usr/bin/grep sshd "$AUTH_LOG" |
-        /usr/bin/grep failed |
-        $PYTHON "$FILTER" -aaaaa
-); do
-    /sbin/pfctl -t "$PF_TBL" -T add "$ADDR"
+# check if we may access the log files
+for AUTH_LOG in $AUTH_LOGS; do
+    [ ! -r "$AUTH_LOG" ] && _fatal "log file not accessible" "$AUTH_LOG"
 done
 
-# remove entries older than 1 day
-/sbin/pfctl -t "$PF_TBL" -T expire 86400
+# grep all failed sshd connections from the logs
+# collect all addresses that occur more than five times
+# and add them to the table
+for AUTH_LOG in $AUTH_LOGS; do
+    /usr/bin/grep -ie 'sshd.*failed' "$AUTH_LOG" |
+    $PYTHON "$FILTER" -aaaaa |
+    /sbin/pfctl -q -t "$PF_TBL" -T add -f -
+done
+
+# remove old entries
+/sbin/pfctl -q -t "$PF_TBL" -T expire "$EXPIRE"
 
 exit 0
