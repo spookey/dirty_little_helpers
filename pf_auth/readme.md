@@ -10,8 +10,6 @@ Remarks:
 * ``pf_auth.sh`` uses full paths for commands so it can run in the crontab
 
 
-
-
 ``/etc/pf.conf`` example:
 
 ```

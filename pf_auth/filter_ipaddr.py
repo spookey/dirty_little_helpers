@@ -8,16 +8,24 @@ import re
 import string
 import sys
 
+ALL_ZERO = [
+    '::',
+    '0.0.0.0',
+]
+
 
 def arguments():
+    def _help(txt):
+        return '{} (default: "%(default)s")'.format(txt)
+
     parser = argparse.ArgumentParser(__file__)
     parser.add_argument(
         '-a', dest='amount', action='count', default=0,
-        help='output addresses with min. occurrences (default: "%(default)s")'
+        help=_help('output addresses with min. occurrences')
     )
     parser.add_argument(
         '-v', dest='verbosity', action='count', default=0,
-        help='increase debug output level (default: "%(default)s")'
+        help=_help('increase debug output level')
     )
     return parser.parse_args()
 
@@ -43,19 +51,20 @@ class Filter:
         try:
             addr = ipaddress.ip_address(text)
         except ValueError as ex:
-            self._message('could not parse "{e}"', level=3, e=ex)
+            self._message('could not parse "{ex}"', level=3, ex=ex)
         return addr
 
     def _parse(self, lines):
         for line in lines:
             line = line.strip()
-            self._message('got line "{l}"', level=1, l=line)
+            self._message('got line "{ln}"', level=1, ln=line)
             line = self.POOL.sub(' ', line)
-            self._message('filtered line "{l}"', level=2, l=line)
+            self._message('filtered line "{ln}"', level=2, ln=line)
             for part in line.split():
                 addr = self._get_addr(part)
-                if addr is not None:
-                    yield addr.compressed
+                addr = addr.compressed if addr else None
+                if addr is not None and addr not in ALL_ZERO:
+                    yield addr
 
     def _retrieve(self):
         for addr, amnt in self.store.items():
@@ -71,6 +80,7 @@ class Filter:
         for addr in self._retrieve():
             sys.stdout.write('{}\n'.format(addr))
 
+        sys.stdout.flush()
         return 0
 
 
