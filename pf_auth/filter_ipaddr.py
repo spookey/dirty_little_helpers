@@ -89,7 +89,6 @@ class Filter:
         for addr in self._retrieve():
             sys.stdout.write('{}\n'.format(addr))
 
-        sys.stdout.flush()
         return 0
 
 
