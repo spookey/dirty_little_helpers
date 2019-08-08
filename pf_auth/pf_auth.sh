@@ -28,7 +28,7 @@ done
 # and add them to the table
 for AUTH_LOG in $AUTH_LOGS; do
     /usr/bin/grep -ie 'sshd.*failed' "$AUTH_LOG" |
-    $PYTHON "$FILTER" -aaaaa |
+    $PYTHON "$FILTER" -a 5 |
     /sbin/pfctl -q -t "$PF_TBL" -T add -f -
 done
 

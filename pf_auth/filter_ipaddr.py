@@ -15,18 +15,27 @@ ALL_ZERO = [
 
 
 def arguments():
+    parser = argparse.ArgumentParser(__file__)
+
     def _help(txt):
         return '{} (default: "%(default)s")'.format(txt)
 
-    parser = argparse.ArgumentParser(__file__)
+    def _abs_num(val):
+        try:
+            val = int(val)
+        except ValueError as ex:
+            parser.error(ex)
+        return abs(val)
+
     parser.add_argument(
-        '-a', dest='amount', action='count', default=0,
+        '-a', dest='amount', type=_abs_num, default=0,
         help=_help('output addresses with min. occurrences')
     )
     parser.add_argument(
-        '-v', dest='verbosity', action='count', default=0,
-        help=_help('increase debug output level')
+        '-v', dest='verbosity', type=_abs_num, default=0,
+        help=_help('increase debug output level (max: "3")')
     )
+
     return parser.parse_args()
 
 
