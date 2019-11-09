@@ -58,7 +58,7 @@ done
 # collect all addresses that occur more than $NUMBER times
 # and add them to the table
 for AUTH_LOG in $AUTH_LOGS; do
-    /usr/bin/grep -ie 'sshd.*failed' "$AUTH_LOG" |
+    /usr/bin/grep -ie 'sshd.*\(failed\|invalid\)' "$AUTH_LOG" |
     $PYTHON "$FILTER" -a "$NUMBER" |
     /sbin/pfctl -q -t "$PF_TBL" -T add -f -
 done
