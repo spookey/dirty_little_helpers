@@ -14,11 +14,11 @@
 ``/etc/pf.conf`` example:
 
 ```
-table <tbl_sshauth_block> persist {}
+table <tbl_block> persist {}
 
 [...]
 
-block drop in from <tbl_sshauth_block> to any
+block drop in from <tbl_block> to any
 ```
 
 Add the script to the crontab.

@@ -7,7 +7,7 @@ PYTHON=${PYTHON:-"/usr/local/bin/python3"}
 
 NUMBER=${NUMBER:-"5"}
 EXPIRE=${EXPIRE:-"86400"}
-PF_TBL=${PF_TBL:-"tbl_sshauth_block"}
+PF_TBL=${PF_TBL:-"tbl_block"}
 
 # writes message to stderr
 _msg() { >&2 echo "$*"; }
