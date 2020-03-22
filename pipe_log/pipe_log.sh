@@ -13,6 +13,7 @@ if [ -t 0 ]; then
     while IFS= read -r LINE; do
         printf "%s\n" "$LINE"
     done < "$TARGET"
+    :> "$TARGET"
 else
     {
         printf ">   %s   <\n" "$STAMP"
