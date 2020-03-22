@@ -3,7 +3,7 @@
 THIS_DIR="$(cd "$(/usr/bin/dirname "$0")" || exit 1; /bin/pwd)"
 
 FILTER=${FILTER:-"$THIS_DIR/filter_ipaddr.py"}
-PYTHON=${PYTHON:-"/usr/local/bin/python2"}
+PYTHON=${PYTHON:-"/usr/local/bin/python3"}
 
 NUMBER=${NUMBER:-"5"}
 EXPIRE=${EXPIRE:-"86400"}

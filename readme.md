@@ -13,3 +13,4 @@ Please see the ``readme`` files in the subfolders.
   * Use full paths for commands so they can run in crontab
 * ``.py`` scripts
   * scripts should work both in ``python2`` and ``python3``
+    (``python2`` will be untested, as it is end of life)
