@@ -6,22 +6,23 @@ TARGET="$THIS_DIR/pipe.log"
 [ -n "$1" ] && TARGET="$1"
 [ ! -f "$TARGET" ] && :> "$TARGET"
 
-STAMP=$(date '+%Y-%m-%d %H-%M-%S')
+STAMP=$(/bin/date '+%Y-%m-%d %H-%M-%S')
+
 
 if [ -t 0 ]; then
-    printf ">>> %s <<<\n" "$STAMP"
-    while IFS= read -r LINE; do
-        printf "%s\n" "$LINE"
-    done < "$TARGET"
+    >&2 printf ">>> %s <<<\n\n%s\n" "$STAMP" "$(/bin/cat "$TARGET")"
     :> "$TARGET"
-else
-    {
-        printf ">   %s   <\n" "$STAMP"
-        while IFS= read -r LINE; do
-            printf "%s\n" "$LINE"
-        done
-        printf "\n"
-    } >> "$TARGET"
+    exit 23
+fi
+
+
+CONTENT=""
+
+while IFS= read -r LINE; do
+    CONTENT="$(printf "%s\n%s" "$CONTENT" "$LINE")"
+done
+if [ -n "$CONTENT" ]; then
+    printf ">   %s   <\n%s\n\n" "$STAMP" "$CONTENT" >> "$TARGET"
 fi
 
 exit 0
