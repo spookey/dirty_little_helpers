@@ -42,7 +42,7 @@ _clear() { :> "$TARGET"; }
 
 
 if [ $EMIT ]; then
-    printf ">>> %s <<<\n\n%s\n" "$STAMP" "$(/bin/cat "$TARGET")"
+    printf "[[[ %s ]]]\n\n%s\n" "$STAMP" "$(/bin/cat "$TARGET")"
     [ $DROP ] && _clear
     exit 23
 fi
@@ -54,7 +54,7 @@ while IFS= read -r LINE; do
     CONTENT="$(printf "%s\n%s" "$CONTENT" "$LINE")"
 done
 if [ -n "$(echo "$CONTENT" | /usr/bin/xargs)" ]; then
-    printf ">   %s   <\n%s\n\n" "$STAMP" "$CONTENT" >> "$TARGET"
+    printf "[   %s   ]\n%s\n\n" "$STAMP" "$CONTENT" >> "$TARGET"
 fi
 
 exit 0
