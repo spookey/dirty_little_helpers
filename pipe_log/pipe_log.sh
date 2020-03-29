@@ -21,7 +21,7 @@ CONTENT=""
 while IFS= read -r LINE; do
     CONTENT="$(printf "%s\n%s" "$CONTENT" "$LINE")"
 done
-if [ -n "$CONTENT" ]; then
+if [ -n "$(echo "$CONTENT" | /usr/bin/xargs)" ]; then
     printf ">   %s   <\n%s\n\n" "$STAMP" "$CONTENT" >> "$TARGET"
 fi
 
