@@ -18,11 +18,11 @@ Do not forget about ``2>&1`` if errors should end up in the log file.
 Collect:
 
 ```
-/some/command 2>&1 | /some/where/pipe_log/pipe_log.sh "/what/ever.log"
+/some/command 2>&1 | /some/where/pipe_log/pipe_log.sh  -t "/what/ever.log"
 ```
 
 Output:
 
 ```
-/some/where/pipe_log/pipe_log.sh "/what/ever.log"
+/some/where/pipe_log/pipe_log.sh -t "/what/ever.log" -ed
 ```

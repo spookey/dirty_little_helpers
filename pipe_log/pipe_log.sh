@@ -2,16 +2,48 @@
 
 THIS_DIR="$(cd "$(/usr/bin/dirname "$0")" || exit 1; /bin/pwd)"
 
-TARGET="$THIS_DIR/pipe.log"
-[ -n "$1" ] && TARGET="$1"
-[ ! -f "$TARGET" ] && :> "$TARGET"
-
 STAMP=$(/bin/date '+%Y-%m-%d %H-%M-%S')
 
+TARGET="$THIS_DIR/pipe.log"
+EMIT=
+DROP=
 
-if [ -t 0 ]; then
-    >&2 printf ">>> %s <<<\n\n%s\n" "$STAMP" "$(/bin/cat "$TARGET")"
-    :> "$TARGET"
+_usage() {
+    echo "usage: $0 [-t] [-e] [-d] [-h]"
+    echo "  -t      specify backlog file target"
+    echo "  -e      emit log contents"
+    echo "  -d      drop log contents (after emitting)"
+    echo "  -h      show this help and exit"
+    echo
+    echo "collecting:"
+    echo "  /some/command 2>&1 | $0 -t /some/where.log"
+    echo
+    if [ -n "$*" ]; then
+        echo "ERROR:"
+        echo "$*"
+        exit 1
+    fi
+    exit 0
+}
+
+while getopts ":t:edh" OPT "$@"; do
+    case $OPT in
+        t)  TARGET="$OPTARG"                        ;;
+        e)  EMIT=1                                  ;;
+        d)  DROP=1                                  ;;
+        h)  _usage                                  ;;
+        :)  _usage "-$OPTARG" "needs an argument"   ;;
+        \?) _usage "invalid option" "-$OPTARG"      ;;
+    esac
+done
+
+_clear() { :> "$TARGET"; }
+[ ! -f "$TARGET" ] && _clear
+
+
+if [ $EMIT ]; then
+    printf ">>> %s <<<\n\n%s\n" "$STAMP" "$(/bin/cat "$TARGET")"
+    [ $DROP ] && _clear
     exit 23
 fi
 
