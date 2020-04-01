@@ -24,5 +24,5 @@ Collect:
 Output:
 
 ```
-/some/where/pipe_log/pipe_log.sh -t "/what/ever.log" -ed
+/some/where/pipe_log/pipe_log.sh -t "/what/ever.log" -edn
 ```
