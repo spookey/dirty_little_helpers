@@ -54,16 +54,29 @@ for AUTH_LOG in $AUTH_LOGS; do
     [ ! -r "$AUTH_LOG" ] && _fatal "log file not accessible" "$AUTH_LOG"
 done
 
+
+# show only relevant parts of pf output
+_report() {
+    while IFS= read -r LINE; do
+        case $LINE in
+            'No ALTQ'*)                 ;;
+            'ALTQ related'*)            ;;
+            '0/'*'addresses'*) return   ;;
+            *) _msg "$LINE"             ;;
+        esac
+    done
+}
+
 # grep all failed sshd connections from the logs
 # collect all addresses that occur more than $NUMBER times
 # and add them to the table
 for AUTH_LOG in $AUTH_LOGS; do
     /usr/bin/grep -ie 'sshd.*\(failed\|invalid\)' "$AUTH_LOG" |
     $PYTHON "$FILTER" -a "$NUMBER" |
-    /sbin/pfctl -q -t "$PF_TBL" -T add -f -
+    /sbin/pfctl -t "$PF_TBL" -vvT add -f - 2>&1 | _report
 done
 
 # remove expired entries
-/sbin/pfctl -q -t "$PF_TBL" -T expire "$EXPIRE"
+/sbin/pfctl -t "$PF_TBL" -vvT expire "$EXPIRE" 2>&1 | _report
 
 exit 0
