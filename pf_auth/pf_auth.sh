@@ -9,15 +9,13 @@ NUMBER=${NUMBER:-"5"}
 EXPIRE=${EXPIRE:-"86400"}
 PF_TBL=${PF_TBL:-"tbl_block"}
 
-# writes message to stderr
+# output
 _msg() { >&2 echo "$*"; }
-
-# shows error message and quits
 _fatal() { _msg "$*"; exit 1; }
 
 # shows usage information and quits
 _usage() {
-    _msg "usage: $0 [-n] [-e] [-t] [-h] auth [auth [...]]"
+    _msg "usage: $0 [-n number] [-e number] [-t name] [-h] auth [auth [...]]"
     _msg "  -n  addresses with min. occurrences"
     _msg "  -e  pf expire time in seconds"
     _msg "  -t  pf table name"
@@ -42,9 +40,17 @@ shift $(( OPTIND - 1 ))
 
 AUTH_LOGS="$*"
 
-
 # check if pf is available - e.g. while booting
 [ ! -e "/dev/pf" ] && _fatal "pf is not available"
+
+# make sure parameters are indeed numbers
+_numeric() {
+    case $2 in
+        ''|*[!0-9]*)    _usage "$1 must be a number"   ;;
+    esac
+}
+_numeric "-n" "$NUMBER"
+_numeric "-e" "$EXPIRE"
 
 # check if log files were provided
 [ -z "$AUTH_LOGS" ] && _fatal "please specify log file(s)"

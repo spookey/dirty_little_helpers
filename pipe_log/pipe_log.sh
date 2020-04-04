@@ -4,32 +4,34 @@ THIS_DIR="$(cd "$(/usr/bin/dirname "$0")" || exit 1; /bin/pwd)"
 
 STAMP=$(/bin/date '+%Y-%m-%d %H:%M:%S')
 
-TARGET="$THIS_DIR/pipe.log"
-STATUS=23
+TARGET=${TARGET:="$THIS_DIR/pipe.log"}
+STATUS=${STATUS:="23"}
 EMIT=
 NULL=
 DROP=
 
+# output
+_msg() { >&2 echo "$*"; }
+_fatal() { _msg "$*"; exit 1; }
+
+# shows usage information and quits
 _usage() {
-    echo "usage: $0 [-t ...] [-r ...] [-e] [-n] [-d] [-h]"
-    echo "  -t      specify backlog file target"
-    echo "  -r      specify error code after emit (should be < 255!)"
-    echo "  -e      emit log contents (instead of trying to collect)"
-    echo "  -n      skip if there is nothing worth emitting"
-    echo "  -d      drop log contents from target (after emit or skip)"
-    echo "  -h      show this help and exit"
-    echo
-    echo "collecting:"
-    echo "  /some/command 2>&1 | $0 -t /some/where.log"
-    echo
-    if [ -n "$*" ]; then
-        echo "ERROR:"
-        echo "$*"
-        exit 1
-    fi
+    _msg "usage: $0 [-t path] [-r number] [-e] [-n] [-d] [-h]"
+    _msg "  -t      specify backlog file target"
+    _msg "  -r      specify error code after emit (should be < 255!)"
+    _msg "  -e      emit log contents (instead of trying to collect)"
+    _msg "  -n      skip if there is nothing worth emitting"
+    _msg "  -d      drop log contents from target (after emit or skip)"
+    _msg "  -h      show this help and exit"
+    _msg
+    _msg "collecting:"
+    _msg "  /some/command 2>&1 | $0 -t /some/where.log"
+    _msg
+    [ -n "$*" ] && _fatal "$*"
     exit 0
 }
 
+# parse arguments
 while getopts ":t:r:endh" OPT "$@"; do
     case $OPT in
         t)  TARGET="$OPTARG"                        ;;
@@ -43,18 +45,21 @@ while getopts ":t:r:endh" OPT "$@"; do
     esac
 done
 
+# make sure status code is indeed a number
 case $STATUS in
     ''|*[!0-9]*)    _usage "-r must be a number"   ;;
 esac
 
-
+# create backlog file
 _clear() { :> "$TARGET"; }
 [ ! -f "$TARGET" ] && _clear
 
 
+# output content of the backlog file
 if [ $EMIT ]; then
     CONTENT="$(/bin/cat "$TARGET")"
 
+    # exit gracefully if no content and requested to do so
     if [ -z "$(echo "$CONTENT" | /usr/bin/xargs)" ]; then
         if [ $NULL ]; then
             exit 0
@@ -67,6 +72,7 @@ if [ $EMIT ]; then
 fi
 
 
+# collect new content for the backlog file
 CONTENT=""
 while IFS= read -r LINE; do
     CONTENT="$(printf "%s\n%s" "$CONTENT" "$LINE")"
