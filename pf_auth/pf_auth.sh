@@ -74,14 +74,12 @@ _report() {
 }
 
 
-TODAY=$(date -v-1d "+%b %e ")
-
 # grep all failed sshd connections from the logs
 # (see /etc/periodic/security/800.loginfail)
 # collect all addresses that occur more than $NUMBER times
 # and add them to the table
 for AUTH_LOG in $AUTH_LOGS; do
-    /usr/bin/grep -Eia "^$TODAY.*: .*\b(fail(ures?|ed)?|invalid|bad|illegal|auth.*error)\b" |
+    /usr/bin/grep -Eia "\b(fail(ures?|ed)?|invalid|bad|illegal|auth.*error)\b" "$AUTH_LOG" |
     $PYTHON "$FILTER" -a "$NUMBER" |
     /sbin/pfctl -t "$PF_TBL" -vvT add -f - 2>&1 | _report
 done
