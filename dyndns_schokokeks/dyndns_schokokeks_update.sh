@@ -11,6 +11,8 @@ ADDR_NS3=${ADDR_NS3:="ns3.schokokeks-dns.de"}
 KEY_FILE=${KEY_FILE:="$HOME/.ssh/id_rsa"}
 SSH_DDNS=${SSH_DDNS:="dyndns@zucker.schokokeks.org"}
 CUST_DNS=""
+RUN_IPV4="YES"
+RUN_IPV6="YES"
 
 # output
 _msg() { >&2 echo "$*"; }
@@ -18,10 +20,12 @@ _fatal() { _msg "$*"; exit 1; }
 
 # shows usage information and quits
 _usage() {
-    _msg "usage: $0 [-d ssh-addr] [-n nameserver] [-k path] [-h] addr"
+    _msg "usage: $0 [-d ssh-addr] [-n nameserver] [-k path] [-h] [-4/-6] addr"
     _msg "  -d  dyndns ssh host connection"
     _msg "  -n  use custom dns server"
     _msg "  -k  path to ssh key file"
+    _msg "  -4  only attempt ipv4 (potato mode)"
+    _msg "  -6  only attempt ipv6 (heroic mode)"
     _msg "  -h  show this help and quit"
     _msg "addr  dyndns address entry"
     [ -n "$*" ] && _fatal "$*"
@@ -29,11 +33,13 @@ _usage() {
 }
 
 # parse arguments
-while getopts ":d:n:k:h" OPT "$@"; do
+while getopts ":d:n:k:46h" OPT "$@"; do
     case $OPT in
         d)  SSH_DDNS="$OPTARG"                  ;;
         n)  CUST_DNS="$OPTARG"                  ;;
         k)  KEY_FILE="$OPTARG"                  ;;
+        4)  RUN_IPV6=""                         ;;
+        6)  RUN_IPV4=""                         ;;
         h)  _usage                              ;;
         :)  _usage "-$OPTARG needs an argument" ;;
         \?) _usage "invalid option: -$OPTARG"   ;;
@@ -102,7 +108,11 @@ _run() {
     _msg
 }
 
-_run "-6" "aaaa"
-_run "-4" "a"
+if [ -n "$RUN_IPV6" ]; then
+    _run "-6" "aaaa"
+fi
+if [ -n "$RUN_IPV4" ]; then
+    _run "-4" "a"
+fi
 
 exit 0
