@@ -15,7 +15,7 @@ msg_code() {
 action() {
     NAME="$1"; shift
     msg_head "$NAME"
-    LIST="$TARGET/list_$NAME.txt"
+    LIST="$TARGET/$NAME.txt"
     /usr/sbin/pkg "$@" info -ao > "$LIST"
     msg_code "$?" "$LIST"
 }
