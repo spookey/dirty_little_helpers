@@ -1,2 +1,3 @@
 *.pyc
-pipe_log/*.log
+/pipe_log/*.log
+/venv/
