@@ -53,24 +53,25 @@ class Filter:
     def clear(self):
         self.store.clear()
 
-    def _message(self, text, level, **fmt):
+    def message(self, text, *, level):
         if self.args.verbosity > 0 and self.args.verbosity >= level:
-            sys.stderr.write(f"{'#' * level} {str(text).format(**fmt)}\n")
+            prefix = "#" * level
+            sys.stderr.write(f"{prefix} {text}\n")
 
     def _get_addr(self, text):
         addr = None
         try:
             addr = ipaddress.ip_address(text)
         except ValueError as ex:
-            self._message('could not parse "{ex}"', level=3, ex=ex)
+            self.message(f"could not parse [{ex}]", level=3)
         return addr
 
     def _parse(self, lines):
         for line in lines:
             line = line.strip()
-            self._message('got line "{ln}"', level=1, ln=line)
+            self.message(f"got line [{line}]", level=1)
             line = self.POOL.sub(" ", line)
-            self._message('filtered line "{ln}"', level=2, ln=line)
+            self.message(f"filtered line [{line}]", level=2)
             for part in line.split():
                 addr = self._get_addr(part)
                 addr = addr.compressed if addr else None
