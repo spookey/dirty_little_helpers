@@ -48,10 +48,6 @@ class Filter:
 
     def __init__(self, args):
         self.args = args
-        self.store = {}
-
-    def clear(self):
-        self.store.clear()
 
     def message(self, text, *, level):
         if self.args.verbosity > 0 and self.args.verbosity >= level:
@@ -78,18 +74,18 @@ class Filter:
                 if addr is not None and addr not in ALL_ZERO:
                     yield addr
 
-    def _retrieve(self):
-        for addr, amnt in self.store.items():
+    def _retrieve(self, store):
+        for addr, amnt in store.items():
             if amnt >= self.args.amount:
                 yield addr
 
     def __call__(self, lines):
-        self.clear()
+        store = {}
 
         for addr in self._parse(lines):
-            self.store[addr] = 1 + self.store.get(addr, 0)
+            store[addr] = 1 + store.get(addr, 0)
 
-        for addr in self._retrieve():
+        for addr in self._retrieve(store):
             sys.stdout.write(f"{addr}\n")
 
         return 0
