@@ -7,8 +7,8 @@ import string
 import sys
 
 ALL_ZERO = [
-    '::',
-    '0.0.0.0',
+    "::",
+    "0.0.0.0",
 ]
 
 
@@ -26,19 +26,25 @@ def arguments():
         return abs(val)
 
     parser.add_argument(
-        '-a', dest='amount', type=_abs_num, default=0,
-        help=_help('output addresses with min. occurrences')
+        "-a",
+        dest="amount",
+        type=_abs_num,
+        default=0,
+        help=_help("output addresses with min. occurrences"),
     )
     parser.add_argument(
-        '-v', dest='verbosity', type=_abs_num, default=0,
-        help=_help('increase debug output level (max: "3")')
+        "-v",
+        dest="verbosity",
+        type=_abs_num,
+        default=0,
+        help=_help('increase debug output level (max: "3")'),
     )
 
     return parser.parse_args()
 
 
 class Filter:
-    POOL = re.compile('[^{}\\.:]'.format(string.hexdigits))
+    POOL = re.compile("[^{}\\.:]".format(string.hexdigits))
 
     def __init__(self, args):
         self.args = args
@@ -49,9 +55,9 @@ class Filter:
 
     def _message(self, text, level, **fmt):
         if self.args.verbosity > 0 and self.args.verbosity >= level:
-            sys.stderr.write('{} {}\n'.format(
-                '#' * level, str(text).format(**fmt)
-            ))
+            sys.stderr.write(
+                "{} {}\n".format("#" * level, str(text).format(**fmt))
+            )
 
     def _get_addr(self, text):
         addr = None
@@ -65,7 +71,7 @@ class Filter:
         for line in lines:
             line = line.strip()
             self._message('got line "{ln}"', level=1, ln=line)
-            line = self.POOL.sub(' ', line)
+            line = self.POOL.sub(" ", line)
             self._message('filtered line "{ln}"', level=2, ln=line)
             for part in line.split():
                 addr = self._get_addr(part)
@@ -85,10 +91,10 @@ class Filter:
             self.store[addr] = 1 + self.store.get(addr, 0)
 
         for addr in self._retrieve():
-            sys.stdout.write('{}\n'.format(addr))
+            sys.stdout.write("{}\n".format(addr))
 
         return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     exit(Filter(arguments())(sys.stdin))
