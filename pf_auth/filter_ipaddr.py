@@ -16,7 +16,7 @@ def arguments():
     parser = argparse.ArgumentParser(__file__)
 
     def _help(txt):
-        return '{} (default: "%(default)s")'.format(txt)
+        return f'{txt} (default: "%(default)s")'
 
     def _abs_num(val):
         try:
@@ -44,7 +44,7 @@ def arguments():
 
 
 class Filter:
-    POOL = re.compile("[^{}\\.:]".format(string.hexdigits))
+    POOL = re.compile(f"[^{string.hexdigits}\\.:]")
 
     def __init__(self, args):
         self.args = args
@@ -55,9 +55,7 @@ class Filter:
 
     def _message(self, text, level, **fmt):
         if self.args.verbosity > 0 and self.args.verbosity >= level:
-            sys.stderr.write(
-                "{} {}\n".format("#" * level, str(text).format(**fmt))
-            )
+            sys.stderr.write(f"{'#' * level} {str(text).format(**fmt)}\n")
 
     def _get_addr(self, text):
         addr = None
@@ -91,10 +89,10 @@ class Filter:
             self.store[addr] = 1 + self.store.get(addr, 0)
 
         for addr in self._retrieve():
-            sys.stdout.write("{}\n".format(addr))
+            sys.stdout.write(f"{addr}\n")
 
         return 0
 
 
 if __name__ == "__main__":
-    exit(Filter(arguments())(sys.stdin))
+    sys.exit(Filter(arguments())(sys.stdin))
