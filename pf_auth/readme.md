@@ -1,19 +1,12 @@
 # pf auth
 
-> Use ``/var/log/auth.log`` to prevent ssh bruteforce attacks.
-
-
-## Remarks
-
-* Make sure to have ``net/py-ipaddress`` installed when running
-  ``filter_ipaddr.py`` with ``python2``
-
+> Use `/var/log/auth.log` to prevent ssh bruteforce attacks.
 
 ## Usage
 
-``/etc/pf.conf`` example:
+`/etc/pf.conf` example:
 
-```
+```plain
 table <tbl_block> persist {}
 
 [...]

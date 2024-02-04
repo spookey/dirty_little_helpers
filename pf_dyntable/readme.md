@@ -1,20 +1,18 @@
 # pf dyntable
 
-> Forwarding traffic from jails using ``pf`` behind some dynamic address.
+> Forwarding traffic from jails using `pf` behind some dynamic address.
 
 I have a box at home running some jails.
 There is dynamic assignment of IP addresses, so it's difficult to forward
 traffic from the jails.
 
-https://www.bsdforen.de/threads/pf-nat-f%C3%BCr-ipv4-und-ipv6-adresse.32344/
-
+See this [Forum thread](https://www.bsdforen.de/threads/pf-nat-f%C3%BCr-ipv4-und-ipv6-adresse.32344/)!
 
 ## Usage
 
-``/etc/pf.conf`` example:
+`/etc/pf.conf` example:
 
-
-```
+```plain
 # interfaces
 if_ext = "em0"
 if_lo0 = "lo0"
