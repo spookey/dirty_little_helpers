@@ -68,7 +68,7 @@ _report() {
             'No ALTQ'*)                 ;;
             'ALTQ related'*)            ;;
             '0/'*'addresses'*) return   ;;
-            *) _msg "$LINE"             ;;
+            *) echo "$LINE"             ;;
         esac
     done
 }
@@ -81,10 +81,12 @@ _report() {
 for AUTH_LOG in $AUTH_LOGS; do
     /usr/bin/grep -Eia "\b(fail(ures?|ed)?|invalid|bad|illegal|auth.*error)\b" "$AUTH_LOG" |
     $PYTHON "$FILTER" -a "$NUMBER" |
-    /sbin/pfctl -t "$PF_TBL" -vvT add -f - 2>&1 | _report
+    /sbin/pfctl -t "$PF_TBL" -vvT add -f - 2>&1 |
+    _report
 done
 
 # remove expired entries
-/sbin/pfctl -t "$PF_TBL" -vvT expire "$EXPIRE" 2>&1 | _report
+/sbin/pfctl -t "$PF_TBL" -vvT expire "$EXPIRE" 2>&1 |
+_report
 
 exit 0
