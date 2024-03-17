@@ -9,6 +9,8 @@ NUMBER=${NUMBER:-"5"}
 EXPIRE=${EXPIRE:-"86400"}
 PF_TBL=${PF_TBL:-"tbl_block"}
 
+STAMP=$(/bin/date -Iseconds)
+
 # output
 _msg() { >&2 echo "$*"; }
 _fatal() { _msg "$*"; exit 1; }
@@ -61,16 +63,20 @@ for AUTH_LOG in $AUTH_LOGS; do
 done
 
 
-# show only relevant parts of pf output
+# collect only relevant parts of pf output and emit data if any
 _report() {
+    BUFFER=""
     while IFS= read -r LINE; do
         case $LINE in
-            'No ALTQ'*)                 ;;
-            'ALTQ related'*)            ;;
-            '0/'*'addresses'*) return   ;;
-            *) echo "$LINE"             ;;
+            'No ALTQ'*)                                     ;;
+            'ALTQ related'*)                                ;;
+            '0/'*'addresses'*) return                       ;;
+            *) BUFFER=$(printf "%s\n%s" "$BUFFER" "$LINE")  ;;
         esac
     done
+    if [ -n "$(echo "$BUFFER" | /usr/bin/xargs)" ]; then
+        printf "[ %s ] %s\n%s\n\n" "$STAMP" "$*" "$BUFFER"
+    fi
 }
 
 
@@ -82,11 +88,12 @@ for AUTH_LOG in $AUTH_LOGS; do
     /usr/bin/grep -Eia "\b(fail(ures?|ed)?|invalid|bad|illegal|auth.*error)\b" "$AUTH_LOG" |
     $PYTHON "$FILTER" -a "$NUMBER" |
     /sbin/pfctl -t "$PF_TBL" -vvT add -f - 2>&1 |
-    _report
+    _report "$PF_TBL" "add" "$AUTH_LOG"
 done
 
 # remove expired entries
 /sbin/pfctl -t "$PF_TBL" -vvT expire "$EXPIRE" 2>&1 |
-_report
+_report "$PF_TBL" "expire" "$EXPIRE"
+
 
 exit 0
