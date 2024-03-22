@@ -48,7 +48,7 @@ done
 shift $(( OPTIND - 1 ))
 
 ADDRESS="$1"
-[ -z "$ADDRESS" ] && _fatal "please specify address"
+[ -z "$ADDRESS" ] && _usage "please specify address"
 
 
 # get address of nameserver - either custom one or random preset

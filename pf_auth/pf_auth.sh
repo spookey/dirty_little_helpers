@@ -55,7 +55,7 @@ _numeric "-n" "$NUMBER"
 _numeric "-e" "$EXPIRE"
 
 # check if log files were provided
-[ -z "$AUTH_LOGS" ] && _fatal "please specify log file(s)"
+[ -z "$AUTH_LOGS" ] && _usage "please specify log file(s)"
 
 # check if we may access the log files
 for AUTH_LOG in $AUTH_LOGS; do

@@ -37,7 +37,7 @@ shift $(( OPTIND - 1 ))
 ACTION="$1"
 [ ! -e "/dev/pf" ] && _fatal "pf is not available"
 [ -z "$ACTION" ] && _usage "action missing"
-[ -z "$INTERFACE" ] && _fatal "please specify interface (via -i)"
+[ -z "$INTERFACE" ] && _usage "please specify interface"
 
 # get raw interface information
 ! IF_INFO=$(/sbin/ifconfig "$INTERFACE") && _fatal "unknown interface name"
