@@ -2,7 +2,7 @@
 
 THIS_DIR="$(cd "$(/usr/bin/dirname "$0")" || exit 1; /bin/pwd)"
 
-STAMP=$(/bin/date '+%Y-%m-%d %H:%M:%S')
+STAMP=$(/bin/date -Iseconds)
 
 TARGET=${TARGET:="$THIS_DIR/pipe.log"}
 STATUS=${STATUS:="23"}

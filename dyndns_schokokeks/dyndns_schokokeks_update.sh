@@ -81,7 +81,7 @@ _update() {
     >&2 /usr/bin/ssh "$1" -T -i "$KEY_FILE" "$SSH_DDNS"
 }
 
-_msg "++" "[$(/bin/date +%s)] $(/bin/date)"
+_msg "++" "[$(/bin/date +%s)] $(/bin/date -Iseconds)"
 _msg "--" "dyndns host: $SSH_DDNS"
 _msg "--" "key file:    $KEY_FILE"
 
