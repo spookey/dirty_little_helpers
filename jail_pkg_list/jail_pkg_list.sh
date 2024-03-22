@@ -23,7 +23,7 @@ action() {
 
 [ ! -d "$TARGET" ] && {
     msg_head "Creating folder" "$TARGET"
-    mkdir -p "$TARGET"
+    /bin/mkdir -p "$TARGET"
     msg_code "$?" "$TARGET"
 }
 
