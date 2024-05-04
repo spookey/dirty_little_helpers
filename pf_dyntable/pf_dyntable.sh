@@ -11,7 +11,7 @@ _fatal() { _log "$*"; _msg "$*"; exit 1; }
 
 # shows usage information and quits
 _usage() {
-    _msg "usage: $0 [-4 table] [-6 table] [-h] -i act"
+    _msg "usage: $0 [-4 table] [-6 table] [-i name] [-h] act"
     _msg "  -4  table name for IPv4 address"
     _msg "  -6  table name for IPv6 address"
     _msg "  -h  show this help and quit"
