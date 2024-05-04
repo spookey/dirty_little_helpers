@@ -1,3 +1,4 @@
 *.pyc
+/newsys_mail/wrapper*.sh
 /pipe_log/*.log
 /venv/
