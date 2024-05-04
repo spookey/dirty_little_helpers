@@ -86,7 +86,7 @@ _report() {
 # and add them to the table
 for AUTH_LOG in $AUTH_LOGS; do
     /usr/bin/grep -Eia "\b(fail(ures?|ed)?|invalid|bad|illegal|auth.*error)\b" "$AUTH_LOG" |
-    $PYTHON "$FILTER" -a "$NUMBER" |
+    $PYTHON "$FILTER" --amount "$NUMBER" |
     /sbin/pfctl -t "$PF_TBL" -vvT add -f - 2>&1 |
     _report "$PF_TBL" "add" "$AUTH_LOG"
 done

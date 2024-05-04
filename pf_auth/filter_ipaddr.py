@@ -27,6 +27,7 @@ def arguments():
 
     parser.add_argument(
         "-a",
+        "--amount",
         dest="amount",
         type=_abs_num,
         default=0,
@@ -34,6 +35,7 @@ def arguments():
     )
     parser.add_argument(
         "-v",
+        "--verbosity",
         dest="verbosity",
         type=_abs_num,
         default=0,
