@@ -6,14 +6,24 @@ THIS_DIR="$(cd "$(/usr/bin/dirname "$0")" || exit 1; /bin/pwd)"
 SCRIPT=${SCRIPT:-"$THIS_DIR/newsys_mail.sh"}
 
 # sender mail address
-export FROM="server@example.org"
+MAIL_FROM="server@example.org"
 # recipient mail address
-export RCPT="somebody@example.org"
+MAIL_RCPT="somebody@example.org"
 # mail subject
-export SUBJ="newsys mail"
-# defer log collecting some seconds
-export PAUSE=0
+MAIL_SUBJ="newsys mail"
+# compressed file format (raw bz gz xz z)
+COMPRESSION="bz"
+# defer log collecting for some seconds
+DEFER=0
+# full path to log file
+LOG_FILE="/var/log/daemon.log.0.bz2"
 
-# full path to file to be sent
-$SCRIPT "/var/log/daemon.log.0.bz2"
+# trigger sending mail
+$SCRIPT \
+    -f "$MAIL_FROM" \
+    -t "$MAIL_RCPT" \
+    -s "$MAIL_SUBJ" \
+    -c "$COMPRESSION" \
+    -d "$DEFER" \
+    "$LOG_FILE"
 exit $?
