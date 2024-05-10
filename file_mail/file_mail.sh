@@ -41,7 +41,7 @@ while getopts ":f:t:s:c:d:h" OPT "$@"; do
 done
 shift $(( OPTIND - 1 ))
 
-LOG_FILE="$1"; shift
+FILE_PATH="$1"; shift
 ARGS="$*"
 
 # validate input
@@ -51,7 +51,7 @@ ARGS="$*"
 case "$DEFER" in
     ''|*[!0-9]*)  _usage "defer must be a number"   ;;
 esac
-[ -z "$LOG_FILE" ] && _usage "log file missing"
+[ -z "$FILE_PATH" ] && _usage "file path missing"
 
 # parse reader for compressed format
 READER=
@@ -67,11 +67,11 @@ esac
 # give newsyslog some time to rotate
 [ "$DEFER" -gt 0 ] && sleep "$DEFER"
 # did the pause succeed?
-[ ! -f "$LOG_FILE" ] && _fatal "log file" "$LOG_FILE" "does not exist"
+[ ! -f "$FILE_PATH" ] && _fatal "file path" "$FILE_PATH" "does not exist"
 
 
 # collect log file content
-CONTENT=$($READER "$LOG_FILE")
+CONTENT=$($READER "$FILE_PATH")
 # skip on empty content
 [ -z "$CONTENT" ] && exit 0
 
@@ -82,7 +82,7 @@ CONTENT=$($READER "$LOG_FILE")
     echo "Subject: $MAIL_SUBJ $STAMP"
     echo "Content-Type: text/html"
     echo
-    echo "<div>$LOG_FILE</div>"
+    echo "<div>$FILE_PATH</div>"
     echo "<div><pre>$CONTENT</pre></div>"
     [ -n "$ARGS" ] && {
         echo

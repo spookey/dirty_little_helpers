@@ -10,20 +10,20 @@ MAIL_FROM="server@example.org"
 # recipient mail address
 MAIL_RCPT="somebody@example.org"
 # mail subject
-MAIL_SUBJ="newsys mail"
+MAIL_SUBJ="newsyslog daemon mail"
 # compressed file format (raw bz gz xz z)
 COMPRESSION="bz"
 # defer log collecting for some seconds
-DEFER=0
+DEFER=60
 # full path to log file
 LOG_FILE="/var/log/daemon.log.0.bz2"
 
-# trigger sending mail
+# trigger sending mail asynchronously
 $SCRIPT \
     -f "$MAIL_FROM" \
     -t "$MAIL_RCPT" \
     -s "$MAIL_SUBJ" \
     -c "$COMPRESSION" \
     -d "$DEFER" \
-    "$LOG_FILE"
-exit $?
+    "$LOG_FILE" &
+exit 0

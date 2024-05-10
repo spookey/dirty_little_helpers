@@ -1,12 +1,24 @@
 # newsys mail
 
-> Send logfile content after newsyslog rotation
+> Send file contents as mail
 
 ## Usage
 
+Required arguments are the `from`, `to` and `subject` arguments.
+
+Pass them either as `-f`, `-t` & `-s` or use the environment variables
+`MAIL_FROM`, `MAIL_RCPT` & `MAIL_SUBJ`.
+
+Final argument specifies the file to be sent by mail.
+
+### newsyslog
+
 Have $something that produces log files.
 
-Copy the `example_wrapper.sh` script and adjust settings.
+Copy the `example_wrapper_newsyslog.sh` script and adjust settings.
+
+Make sure to use some generous `DEFER` value and keep the forking (`&`).
+Otherwise issues will occur.
 
 Add some rule for newsyslog:
 
