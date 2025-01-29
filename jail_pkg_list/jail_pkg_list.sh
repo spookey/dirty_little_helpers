@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-TARGET="${TARGET:-"/root/pkg_list"}"
+TARGET="${TARGET:-"$HOME/pkg_list"}"
 
 msg_head() {
     echo "###"
