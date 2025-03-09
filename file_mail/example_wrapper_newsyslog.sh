@@ -3,7 +3,7 @@
 THIS_DIR="$(cd "$(/usr/bin/dirname "$0")" || exit 1; /bin/pwd)"
 
 # either that if wrapper is in same folder or full path
-SCRIPT=${SCRIPT:-"$THIS_DIR/file_mail.sh"}
+SCRIPT="${SCRIPT:-"$THIS_DIR/file_mail.sh"}"
 
 # sender mail address
 MAIL_FROM="server@example.org"
