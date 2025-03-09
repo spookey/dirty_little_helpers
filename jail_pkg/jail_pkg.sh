@@ -18,7 +18,7 @@ action() {
 }
 
 action "host" "$@"
-for NAME in $(/usr/sbin/jls -q name); do
+for NAME in $(/usr/sbin/jls -q name | /usr/bin/sort); do
     action "$NAME" -j "$NAME" "$@"
 done
 

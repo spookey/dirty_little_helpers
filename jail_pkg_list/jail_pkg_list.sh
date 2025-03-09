@@ -27,6 +27,7 @@ action() {
     msg_code "$?" "$TARGET"
 }
 
+for NAME in $(/usr/sbin/jls -q name | /usr/bin/sort); do
 action "host"
 for NAME in $(/usr/sbin/jls -q name); do
     action "$NAME" -j "$NAME"
