@@ -39,13 +39,13 @@ ACTION="$1"
 [ -z "$ACTION" ] && _usage "action missing"
 [ -z "$INTERFACE" ] && _usage "please specify interface"
 
-# get raw interface information
-! IF_INFO=$(/sbin/ifconfig "$INTERFACE") && _fatal "unknown interface name"
-
-# parse and return ifconfig output
-_info() {
-    echo "$IF_INFO" | /usr/bin/grep -e "$1" | \
-        /usr/bin/head -1 | /usr/bin/cut -d' ' -f2
+# return persistent addresses from ifconfig output
+_addr() {
+    /sbin/ifconfig "$INTERFACE" "$1" \
+    | /usr/bin/grep "$1" \
+    | /usr/bin/grep -v "temporary" \
+    | /usr/bin/cut -d' ' -f2 \
+    | /usr/bin/grep -e "^[^f]"
 }
 
 # operate on pf table
@@ -55,9 +55,8 @@ _table() {
     /sbin/pfctl -t "$TBL" -T "$@"
 }
 
-
-ADDR_IP4=$(_info "inet[^6]")
-ADDR_IP6=$(_info "inet6\ [^f].*temporary")
+ADDR_IP4=$(_addr "inet"     | /usr/bin/head -1)
+ADDR_IP6=$(_addr "inet6"    | /usr/bin/head -1)
 
 # display current information
 show() {
